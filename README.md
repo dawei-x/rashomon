@@ -1,8 +1,6 @@
-# ModelSet Explorer
+# Rashomon Model Explorer
 
-A browser app for exploring a *model set*: many additive classification models that are all nearly equally accurate on the same data. See each feature's curve across all models, which instances get a different decision depending on the model, and narrow the set with monotone and rectangle constraints. Everything runs in the browser; there is no server.
-
-Live site: https://dawei-x.github.io/rashomon/
+An interactive system that supports exploring sets of interpretable, near-optimal sparse generalized additive models, and helping experts translate domain expertise into model constraints to inspect model behavior, identify implausible relationships, and narrow candidate models.
 
 ## App (`app/`)
 

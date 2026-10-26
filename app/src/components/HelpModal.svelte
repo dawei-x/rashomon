@@ -12,7 +12,7 @@
 <div class="backdrop" onclick={() => (session.helpOpen = false)}>
   <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-label="Help" tabindex="-1">
     <div class="head">
-      <h2>ModelSet Explorer</h2>
+      <h2>Rashomon Model Explorer</h2>
       <button class="icon" aria-label="Close" onclick={() => (session.helpOpen = false)}>×</button>
     </div>
 

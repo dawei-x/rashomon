@@ -36,7 +36,7 @@
 <svelte:window onclick={() => (menuOpen = false)} />
 
 <header>
-  <h1>ModelSet Explorer</h1>
+  <h1>Rashomon Model Explorer</h1>
   {#if session.dataset}<span class="muted file">{session.dataset.name ?? session.sourceName}</span>{/if}
   <div class="spacer"></div>
   <button onclick={() => session.undo()} disabled={session.undoStack.length === 0}>Undo</button>
