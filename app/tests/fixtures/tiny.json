@@ -1,0 +1,27 @@
+{
+  "schema": "modelset.v1",
+  "name": "tiny fixture",
+  "target": { "name": "y", "positive_label": 1 },
+  "features": [
+    { "name": "A", "type": "continuous", "thresholds": [10], "unit": "u" },
+    { "name": "B", "type": "binary", "thresholds": [0.5] }
+  ],
+  "models": {
+    "intercepts": [-1, -0.8, -1.2],
+    "weights": [
+      [-0.5, 0.5, 0, 1],
+      [0.4, -0.4, 0, 0.9],
+      [-0.3, 0.6, 0.5, -0.5]
+    ],
+    "loss": [0.30, 0.31, 0.32],
+    "metrics": { "auc": [0.8, 0.7, 0.6] },
+    "ids": ["m0", "m1", "m2"]
+  },
+  "data": {
+    "columns": ["A", "B"],
+    "rows": [[12, 1], [5, 0], [10, 0], [8, 1]],
+    "y": [1, 0, 0, 1],
+    "ids": ["a", "b", "c", "d"]
+  },
+  "meta": { "source": "hand-made test fixture" }
+}

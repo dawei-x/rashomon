@@ -1,0 +1,4 @@
+{ "schema": "modelset.v1",
+  "features": [ { "name": "x", "type": "continuous", "thresholds": [1, 2] } ],
+  "models": { "intercepts": [0], "weights": [[0.1, 0.2, 0.3]], "loss": [0.5] },
+  "data": { "columns": ["x"], "rows": [[0.5]] } }

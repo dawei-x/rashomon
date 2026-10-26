@@ -1,0 +1,4 @@
+{ "schema": "modelset.v1", "whatever": 1, "session": { "anything": true },
+  "features": [ { "name": "x", "type": "binary", "thresholds": [0.5], "range": [0, 1] } ],
+  "models": { "intercepts": [0, 1], "weights": [[0, 1], [1, 0]], "loss": [0.5, 0.6], "ids": ["a", "b"] },
+  "data": { "columns": ["x"], "rows": [[0], [1]], "y": [0, 1], "ids": ["r0", "r1"] } }
