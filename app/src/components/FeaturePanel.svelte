@@ -29,7 +29,7 @@
   </div>
   <div class="hint">
     {#if session.selectedModel === null}
-      Click any curve to select that model; it is highlighted in pink in every view.
+      <strong>Click any curve to select that model, which would be highlighted in <span class="pink">pink</span> in every view.</strong>
     {:else}
       Selected model <span class="mono sel">{prep.modelIds[session.selectedModel]}</span> · loss
       {ds.models.loss[session.selectedModel].toFixed(4)}
@@ -93,6 +93,9 @@
   .sel {
     color: var(--c-selected);
     font-weight: 600;
+  }
+  .pink {
+    color: var(--c-selected);
   }
   .scroll {
     overflow-y: auto;

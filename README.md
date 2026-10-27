@@ -38,7 +38,7 @@ python build_modelset.py --csv out/support2.csv --target hospdead \
    --features age,temp,hrt,resp,meanbp,wblc,sod,crea,bili,bun,alb,pafi,scoma,glucose,urine,ph,num.co,dementia,diabetes,ca \
    --out ../app/public/data/demo.json --n-models 150 --n-rows 800 --epsilon 0.05 --seed 0 \
    --impute-json support2_impute.json --recode-json support2_recode.json \
-   --name "SUPPORT2 in-hospital death (demo)" --label-names '{"0": "survived", "1": "died in hospital"}'
+   --name "SUPPORT2 in-hospital death dataset (demo)" --label-names '{"0": "survived", "1": "died in hospital"}'
 ```
 
 See [prep/README.md](prep/README.md) for details and self-checks.

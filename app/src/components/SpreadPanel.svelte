@@ -85,7 +85,8 @@
         if (!s || s[1] - s[0] < 3) {
           const [px] = d3.pointer(event.sourceEvent, brushG)
           const i = nearest(px)
-          if (i !== null) session.selectInstance(i)
+          // clicking the selected instance again deselects it
+          if (i !== null) session.selectInstance(i === session.selectedInstance ? null : i)
         } else {
           const lo = Math.max(Math.ceil(x.invert(s[0])), 1)
           const hi = Math.min(Math.floor(x.invert(s[1])), prep.n)

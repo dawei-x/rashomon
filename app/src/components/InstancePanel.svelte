@@ -60,10 +60,13 @@
     {#if i !== null && ds.data.y}
       <span class="muted">observed {ds.target?.label_names?.[String(ds.data.y[i])] ?? ds.data.y[i]}</span>
     {/if}
+    {#if i !== null}
+      <button class="link deselect" onclick={() => session.selectInstance(null)}>clear</button>
+    {/if}
   </div>
 
   {#if i === null}
-    <p class="empty">Click an instance in the plot above.</p>
+    <p class="empty prompt">Click an instance in the plot above.</p>
   {:else if session.activeCount === 0}
     <p class="empty">No models satisfy the constraints.</p>
   {:else}
@@ -132,6 +135,13 @@
   }
   .flabel {
     fill: var(--c-text);
+  }
+  .prompt {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .deselect {
+    margin-left: auto;
   }
   .formulas {
     overflow: auto;

@@ -45,7 +45,7 @@
       <li><strong>↗ button</strong> on a feature card cycles none → monotone increasing → monotone decreasing.</li>
       <li><strong>Dashed-square button</strong> enters rectangle mode: drag a box on the curve plot, then keep only or exclude the models whose curves pass through it.</li>
       <li>Hover a curve to see its model; click it to select that model everywhere. Click it again to clear.</li>
-      <li>Drag across the prediction plot to zoom into a rank range; click it to inspect an instance. Drag the red threshold pill, or double-click it to type a value.</li>
+      <li>Drag across the prediction plot to zoom into a rank range; click it to inspect an instance, and click the same instance again (or <strong>clear</strong> in the Instance panel) to deselect it. Drag the red threshold pill, or double-click it to type a value.</li>
       <li><strong>History</strong> lists every constraint: disable, delete, edit its rationale, or remove everything added after it. Undo/Redo step through these changes.</li>
       <li><strong>+ label</strong> and the notes button annotate a feature; the Labels tab lists all annotations.</li>
       <li>Nothing is saved between visits: refreshing the page, or <strong>Reset session</strong> in the ⋯ menu, starts over. Use <strong>Download JSON</strong> to keep your work.</li>
