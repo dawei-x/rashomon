@@ -1,6 +1,6 @@
 # Rashomon Model Explorer
 
-An interactive system that supports exploring sets of interpretable, near-optimal sparse generalized additive models, and helping experts translate domain expertise into model constraints to inspect model behavior, identify implausible relationships, and narrow candidate models.
+An interactive system that supports exploring sets of interpretable, near-optimal sparse generalized additive models, and helps users translate domain expertise into model constraints to inspect model behavior, identify implausible relationships, and narrow candidate models.
 
 ## App (`app/`)
 
@@ -51,7 +51,7 @@ Manual checks on the built site (`npm run build`, then serve `app/dist/` from a 
 
 1. The demo loads with `150/150 model(s) satisfy…`; the lab-feature histograms (pafi, bili, bun, alb, urine, wblc) show spikes at the imputation constants.
 2. Monotone ↗ on `age` leaves only the models whose age curve never steps down; the count, spread plot, rug and caption update.
-3. Draw a rectangle on a curve plot and keep the matching models; Undo then Redo, and reload the page: the same models stay active.
+3. Draw a rectangle on a curve plot and keep the matching models; Undo then Redo: the same models stay active. Reload the page: everything is back to the initial view.
 4. Monotone on one feature hides model C; a rectangle on another feature matches B and C; disabling the first constraint in History makes C active again.
 5. Zoom into a rank range, then add a constraint that removes the reference model: the zoom resets with a toast. Select a model, then hide it: the selection clears.
 6. Constrain to zero models: every panel shows its empty state, Download is disabled, there are no NaN values, and Undo still works. Turn on "Only instances whose decision flips" and raise the threshold until nothing flips: "No instances match" shows with `reset`.

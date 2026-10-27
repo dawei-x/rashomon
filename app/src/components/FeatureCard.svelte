@@ -181,7 +181,7 @@
     <div class="gutter">
       <div class="anchor">
         <button class="icon" class:active={notesOpen} title="Notes" aria-label="Notes" onclick={() => (notesOpen = !notesOpen)}>
-          <svg width="14" height="14" viewBox="0 0 14 14"
+          <svg width="17" height="17" viewBox="0 0 14 14"
             ><path d="M3 1h6l3 3v9H3z M9 1v3h3 M5 7h5 M5 9.5h5" fill="none" stroke="currentColor" /></svg
           >
           {#if note}<span class="dot"></span>{/if}
@@ -217,7 +217,7 @@
         aria-label="Rectangle filter"
         onclick={() => session.toggleFilterMode(f.name)}
       >
-        <svg width="14" height="14" viewBox="0 0 14 14"
+        <svg width="17" height="17" viewBox="0 0 14 14"
           ><rect x="2" y="2" width="10" height="10" fill="none" stroke="currentColor" stroke-dasharray="2 1.5" /></svg
         >
       </button>
@@ -343,6 +343,8 @@
   }
   .gutter button {
     position: relative;
+    width: 30px;
+    height: 30px;
   }
   .dot {
     position: absolute;
@@ -355,7 +357,7 @@
   }
   .mono-btn {
     color: var(--c-muted);
-    font-size: 14px;
+    font-size: 16px;
   }
   .mono-btn.on {
     background: var(--c-ref);

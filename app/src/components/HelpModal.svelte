@@ -48,7 +48,7 @@
       <li>Drag across the prediction plot to zoom into a rank range; click it to inspect an instance. Drag the red threshold pill, or double-click it to type a value.</li>
       <li><strong>History</strong> lists every constraint: disable, delete, edit its rationale, or remove everything added after it. Undo/Redo step through these changes.</li>
       <li><strong>+ label</strong> and the notes button annotate a feature; the Labels tab lists all annotations.</li>
-      <li>Your constraints, labels, notes and threshold are saved in this browser for this file. <strong>Clear session</strong> (⋯ menu) forgets them.</li>
+      <li>Nothing is saved between visits: refreshing the page, or <strong>Reset session</strong> in the ⋯ menu, starts over. Use <strong>Download JSON</strong> to keep your work.</li>
     </ul>
 
     <h3>Export and import</h3>

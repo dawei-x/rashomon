@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { Session } from '../src/lib/session.svelte'
 import { modelsInRect } from '../src/lib/constraints'
-import { MemoryStorage, seq, tinyText } from './helpers'
+import { seq, tinyText } from './helpers'
 
-function fresh(storage = new MemoryStorage()) {
-  const s = new Session({ storage, random: seq(), now: () => '2026-01-01T00:00:00.000Z' })
+function fresh() {
+  const s = new Session({ random: seq(), now: () => '2026-01-01T00:00:00.000Z' })
   const r = s.loadText(tinyText(), 'tiny.json')
   expect(r.ok).toBe(true)
   return s
@@ -51,9 +51,8 @@ describe('ops, undo/redo', () => {
     expect(s.redoStack).toEqual([])
   })
 
-  it('restores the same filter op after undo → redo and after reload', () => {
-    const storage = new MemoryStorage()
-    const s = fresh(storage)
+  it('restores the same filter op after undo → redo; a reload starts clean', () => {
+    const s = fresh()
     const idx = modelsInRect(s.dataset!, 0, s.prep!.xDomain[0], { x0: 9.9, x1: 10.1, y0: 0.45, y1: 0.55 })
     s.addFilter('A', 'keep', [10, 10.1], [0.45, 0.55], idx, 'why')
     const op = s.ops[0]
@@ -64,9 +63,9 @@ describe('ops, undo/redo', () => {
     s.redo()
     expect(s.ops[0]).toEqual(op)
     expect(s.activeModels).toEqual([0, 2])
-    const again = fresh(storage) // same file text → same hash → restored
-    expect(again.ops).toEqual([op])
-    expect(again.activeModels).toEqual([0, 2])
+    const again = fresh() // nothing persists across page loads
+    expect(again.ops).toEqual([])
+    expect(again.activeModels).toEqual([0, 1, 2])
   })
 
   it('toggles, deletes, edits rationale, and removes later constraints', () => {
@@ -159,7 +158,7 @@ describe('export / import', () => {
     s.setThreshold(0.42)
     s.setMonotone('B', 'down') // only m2
     const out = s.exportObject()!
-    const t = new Session({ storage: new MemoryStorage(), random: seq(7) })
+    const t = new Session({ random: seq(7) })
     const r = t.loadText(JSON.stringify(out), 'subset.json')
     expect(r.ok).toBe(true)
     expect(t.prep!.N).toBe(1)
@@ -178,16 +177,15 @@ describe('export / import', () => {
     expect((out.session as any).kept_model_indices).toEqual([2])
   })
 
-  it('clear session resets to the file and forgets the saved entry', () => {
-    const storage = new MemoryStorage()
-    const s = fresh(storage)
+  it('reset session returns to the initial state', () => {
+    const s = fresh()
     s.setMonotone('A', 'up')
     s.addLabel('A', 'exclude')
-    expect(storage.map.size).toBe(1)
-    s.clearSession()
-    expect(storage.map.size).toBe(0)
+    s.setThreshold(0.3)
+    s.resetSession()
     expect(s.ops).toEqual([])
+    expect(s.undoStack).toEqual([])
     expect(s.labels).toEqual({})
-    expect(fresh(storage).ops).toEqual([])
+    expect(s.threshold).toBe(0.5)
   })
 })

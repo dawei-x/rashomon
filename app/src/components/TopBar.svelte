@@ -27,9 +27,9 @@
     URL.revokeObjectURL(a.href)
   }
 
-  function clearSession() {
+  function resetSession() {
     menuOpen = false
-    if (confirm('Clear constraints, labels and notes for this file?')) session.clearSession()
+    if (confirm('Reset constraints, labels and notes to the initial state?')) session.resetSession()
   }
 </script>
 
@@ -59,7 +59,7 @@
     >
     {#if menuOpen}
       <div class="popover menu-items">
-        <button onclick={clearSession} disabled={!session.dataset}>Clear session</button>
+        <button onclick={resetSession} disabled={!session.dataset}>Reset session</button>
       </div>
     {/if}
   </div>

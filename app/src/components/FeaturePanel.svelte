@@ -27,6 +27,15 @@
     </div>
     <span class="count">{session.activeCount}/{prep.N} model(s) satisfy the constraints specified</span>
   </div>
+  <div class="hint">
+    {#if session.selectedModel === null}
+      Click any curve to select that model; it is highlighted in pink in every view.
+    {:else}
+      Selected model <span class="mono sel">{prep.modelIds[session.selectedModel]}</span> · loss
+      {ds.models.loss[session.selectedModel].toFixed(4)}
+      <button class="link" onclick={() => session.toggleSelectedModel(null)}>clear</button>
+    {/if}
+  </div>
 
   <div class="scroll">
     {#if tab === 'curves'}
@@ -74,6 +83,16 @@
   .count {
     margin-left: auto;
     color: var(--c-muted);
+  }
+  .hint {
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--c-muted);
+    border-bottom: 1px solid var(--c-border);
+  }
+  .sel {
+    color: var(--c-selected);
+    font-weight: 600;
   }
   .scroll {
     overflow-y: auto;

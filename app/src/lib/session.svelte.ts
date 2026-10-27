@@ -14,18 +14,13 @@ import {
   type Op,
   type ProvenanceEntry,
 } from './constraints'
-import { hashString, newId } from './ids'
+import { newId } from './ids'
 
 export type InstanceFilter = { kind: 'none' } | { kind: 'rankRange'; lo: number; hi: number } | { kind: 'flippedOnly' }
 export interface TooltipState {
   x: number
   y: number
   html: string
-}
-export interface StorageLike {
-  getItem(key: string): string | null
-  setItem(key: string, value: string): void
-  removeItem(key: string): void
 }
 export type LoadResult = { ok: true; warnings: string[] } | { ok: false; problems: string[] }
 
@@ -39,14 +34,6 @@ interface FileSession {
 
 const isObj = (v: unknown): v is Record<string, any> => typeof v === 'object' && v !== null && !Array.isArray(v)
 const clampTau = (v: number) => Math.min(0.99, Math.max(0.01, Math.round(v * 100) / 100))
-
-function defaultStorage(): StorageLike | null {
-  try {
-    return globalThis.localStorage ?? null
-  } catch {
-    return null
-  }
-}
 
 function pickStrings<T>(src: unknown, names: Set<string>, ok: (v: unknown) => T | undefined): Record<string, T> {
   const out: Record<string, T> = {}
@@ -86,7 +73,6 @@ function readFileSession(raw: unknown, names: Set<string>): FileSession | null {
 export class Session {
   // --- state (§5.1)
   dataset = $state.raw<ModelSet | null>(null)
-  datasetHash = $state<string | null>(null)
   sourceName = $state('')
   ops = $state.raw<Op[]>([])
   undoStack = $state.raw<Op[][]>([])
@@ -131,14 +117,12 @@ export class Session {
   })
   nVisible = $derived(this.visibleInstances.length)
 
-  private storage: StorageLike | null
   private random: () => number
   private now: () => string
   private fileSession: FileSession | null = null
   private toastTimer: ReturnType<typeof setTimeout> | undefined
 
-  constructor(opts: { storage?: StorageLike | null; random?: () => number; now?: () => string } = {}) {
-    this.storage = opts.storage === undefined ? defaultStorage() : opts.storage
+  constructor(opts: { random?: () => number; now?: () => string } = {}) {
     this.random = opts.random ?? Math.random
     this.now = opts.now ?? (() => new Date().toISOString())
   }
@@ -155,15 +139,17 @@ export class Session {
     const v = validate(parsed)
     if (!v.ok) return v
     this.dataset = v.value
-    this.datasetHash = hashString(text)
     this.sourceName = sourceName
     this.fileSession = readFileSession(v.value.session, new Set(v.value.features.map((f) => f.name)))
-    this.resetSession(true)
+    this.resetSession()
     return { ok: true, warnings: v.warnings }
   }
 
-  /** Back to what a fresh load of the current file gives; optionally restore the saved session. */
-  private resetSession(restoreSaved: boolean) {
+  /**
+   * Back to what a fresh load of the current file gives. Nothing is kept across page loads:
+   * a refresh always starts here, and Download JSON is how work is saved.
+   */
+  resetSession() {
     this.ops = []
     this.undoStack = []
     this.redoStack = []
@@ -175,57 +161,6 @@ export class Session {
     this.notes = this.fileSession?.notes ?? {}
     this.threshold = this.fileSession?.threshold ?? 0.5
     this.provenance = this.fileSession?.provenance ?? []
-    if (restoreSaved) this.restoreSaved()
-  }
-
-  /** Remove the saved entry and reset the session for the loaded file. */
-  clearSession() {
-    if (this.datasetHash) this.storageCall((s) => s.removeItem(this.storageKey))
-    this.resetSession(false)
-  }
-
-  private get storageKey() {
-    return `modelset:${this.datasetHash}`
-  }
-
-  private storageCall<T>(fn: (s: StorageLike) => T): T | undefined {
-    if (!this.storage) return undefined
-    try {
-      return fn(this.storage)
-    } catch {
-      return undefined
-    }
-  }
-
-  private persist() {
-    if (!this.datasetHash) return
-    const body = JSON.stringify({ ops: this.ops, labels: this.labels, notes: this.notes, threshold: this.threshold })
-    this.storageCall((s) => s.setItem(this.storageKey, body))
-  }
-
-  private restoreSaved() {
-    const ds = this.dataset!
-    const raw = this.storageCall((s) => s.getItem(this.storageKey))
-    if (!raw) return
-    let saved: any
-    try {
-      saved = JSON.parse(raw)
-    } catch {
-      return
-    }
-    if (!isObj(saved)) return
-    const names = new Set(ds.features.map((f) => f.name))
-    const N = ds.models.intercepts.length
-    const okOp = (o: any): o is Op =>
-      isObj(o) &&
-      typeof o.id === 'string' &&
-      names.has(o.feature) &&
-      ((o.kind === 'monotone' && (o.direction === 'up' || o.direction === 'down')) ||
-        (o.kind === 'filter' && Array.isArray(o.modelIdx) && o.modelIdx.every((m: unknown) => Number.isInteger(m) && (m as number) >= 0 && (m as number) < N)))
-    if (Array.isArray(saved.ops)) this.ops = saved.ops.filter(okOp)
-    if (isObj(saved.labels)) this.labels = pickStrings(saved.labels, names, asLabels)
-    if (isObj(saved.notes)) this.notes = pickStrings(saved.notes, names, asNote)
-    if (typeof saved.threshold === 'number') this.threshold = clampTau(saved.threshold)
   }
 
   // --- constraint ops (§5.4), each undoable
@@ -243,7 +178,6 @@ export class Session {
       this.instanceFilter = { kind: 'none' }
       this.showToast('Ordering changed — zoom reset')
     }
-    this.persist()
   }
 
   private commit(next: Op[]) {
@@ -328,25 +262,21 @@ export class Session {
     const cur = this.labels[feature] ?? []
     if (!l || cur.includes(l)) return
     this.labels = { ...this.labels, [feature]: [...cur, l] }
-    this.persist()
   }
 
   removeLabel(feature: string, label: string) {
     const next = (this.labels[feature] ?? []).filter((x) => x !== label)
     const { [feature]: _, ...rest } = this.labels
     this.labels = next.length ? { ...rest, [feature]: next } : rest
-    this.persist()
   }
 
   setNote(feature: string, text: string) {
     const { [feature]: _, ...rest } = this.notes
     this.notes = text.trim() ? { ...rest, [feature]: text } : rest
-    this.persist()
   }
 
   setThreshold(v: number) {
     this.threshold = clampTau(v)
-    this.persist()
   }
 
   selectInstance(i: number | null) {

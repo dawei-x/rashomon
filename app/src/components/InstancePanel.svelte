@@ -107,6 +107,11 @@
             {/if}
           </div>
         {/each}
+        {#if session.selectedModel === null}
+          <div class="formula muted">
+            <span class="lbl" style:color="var(--c-selected)">p_selected</span> — click a curve in the feature panel to add a model here.
+          </div>
+        {/if}
       </div>
     </div>
   {/if}
